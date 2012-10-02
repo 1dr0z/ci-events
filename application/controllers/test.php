@@ -5,8 +5,8 @@ class test extends MY_Controller {
 
 	public function index() {
 		$data = array(
-			'data' => true,
-			'test' => true
+			'before' => true,
+			'test'   => true
 		);
 
 		// Notice that it doesn't bind the hooks multiple times.
@@ -15,6 +15,8 @@ class test extends MY_Controller {
 
 		try {
 			trigger_event('TEST', $data, function( &$event ) {
+				$event->data['before'] = false;
+
 				echo "[{$event->name}] : default action<br />";
 				var_dump( $event->result );
 				var_dump( $event->data   );
