@@ -10,12 +10,14 @@ class Event_Handler {
 		if ( is_dir($path) && $dir = opendir($path)) {
 			while ( ($file = readdir($dir)) !== false ) {
 				if ( !in_array($file, array('.', '..')) && substr($file, -3) == 'php') {
-					include_once $path.$file;
+					if ( !in_array($path.$file, get_included_files()) ) {
+						include_once $path.$file;
 
-					// To avoid class name collision, we'll require that classes be named folder_filename
-					$class = $folder.'_'.str_replace('.php', '', $file);
-					if (class_exists($class) && method_exists($class, 'register')) {
-						call_user_func(array($class, 'register'));
+						// To avoid class name collision, we'll require that classes be named folder_filename
+						$class = $folder.'_'.str_replace('.php', '', $file);
+						if (class_exists($class) && method_exists($class, 'register')) {
+							call_user_func(array($class, 'register'));
+						}
 					}
 				}
 			}
@@ -61,10 +63,15 @@ class Event_Handler {
 
 				else if ( is_array($callback) ) {
 					list($obj, $method) = $callback;
-					$obj->$method( $event, $params );
+
+					if ( is_string($obj) ) {
+						$obj::$method( $event, $params );
+					} else {
+						$obj->$method( $event, $params );
+					}
 				}
 
-				else if ( is_string ) {
+				else if ( is_string($callback) ) {
 					$callback( $event, $params );
 				}
 
@@ -156,10 +163,14 @@ class Event {
 
 			else if ( is_array($callback) ) {
 				list($obj, $method) = $callback;
-				$obj->$method( $this );
+				if ( is_string($obj) ) {
+					$obj::$method( $this );
+				} else {
+					$obj->$method( $this );
+				}
 			}
 
-			else if ( is_string ) {
+			else if ( is_string($callback) ) {
 				$callback( $this );
 			}
 		}
@@ -182,7 +193,7 @@ class Event {
  *                                         by default this is the return value of the default action however
  *                                         it can be set or modified by event handler hooks
  */
-function trigger_event($name, &$data, $action = null, $override_default = true) {
+function trigger_event($name, $data, $action = null, $override_default = true) {
 	$event = new Event($name, $data);
 	return $event->trigger($action, $override_default);
 }
