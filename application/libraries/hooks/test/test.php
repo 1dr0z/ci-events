@@ -6,6 +6,7 @@ class test_test {
 		Event_Handler::register_before('TEST', function( &$event, $params ) {
 			echo Event::BEFORE . '<br />';
 			var_dump( $event->result );
+			var_dump( $event->data   );
 //			$event->prevent_default();
 //			$event->stop_propagation();
 
@@ -15,6 +16,7 @@ class test_test {
 		Event_Handler::register_before('TEST', function( &$event ) {
 			echo Event::BEFORE.'_2<br />';
 			var_dump( $event->result );
+			var_dump( $event->data   );
 //			$event->prevent_default();
 //			$event->stop_propagation();
 
@@ -25,6 +27,7 @@ class test_test {
 		Event_Handler::register_after('TEST', function( &$event, $params ) {
 			echo Event::AFTER . '<br />';
 			var_dump( $event->result );
+			var_dump( $event->data   );
 //			$event->prevent_default();
 //			$event->stop_propagation();
 
@@ -34,6 +37,7 @@ class test_test {
 		Event_Handler::register_after('TEST', function( &$event, $params ) {
 			echo Event::AFTER.'_2 <br />';
 			var_dump( $event->result );
+			var_dump( $event->data   );
 //			$event->prevent_default();
 //			$event->stop_propagation();
 

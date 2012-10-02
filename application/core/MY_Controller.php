@@ -1,6 +1,5 @@
 <?php
 
-require_once APPPATH.'libraries/REST_Controller.php';
 class MY_Controller extends CI_Controller {
 
 	protected $hooks_folder = '';
