@@ -229,7 +229,7 @@ class Event {
 
 		// AFTER
 		$this->notify_after();
-		
+
 		return $this->result;
 	}
 }
