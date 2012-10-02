@@ -177,7 +177,7 @@ class Event {
      * @return  results of processing the event, usually $this->_default
      */
 	public function notify_before( $override_default = true) {
-		$this->notify(self::BEFORE);
+		$this->notify(self::BEFORE, $override_default);
 		return (!$override_default || $this->_default);
 	}
 
