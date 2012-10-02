@@ -23,6 +23,9 @@ class test extends MY_Controller {
 			// Modify result & data
 			$event->data['trace'][] = 'default_action';
 
+			// Trigger CUSTOM
+			//$event->notify('CUSTOM');
+
 			return 'default_action';
 		};
 

@@ -65,6 +65,18 @@ class test_test {
 
 			return 'result_after_2';
 		}, new stdClass());
+
+
+		/// CUSTOM STATE ///
+		Event_Handler::register('TEST', 'CUSTOM', function( &$event ) {
+			echo "[{$event->name}] : CUSTOM<br />";
+			var_dump( $event->result );
+			var_dump( $event->data   );
+
+			$event->data['trace'][] = 'custom';
+
+			return 'custom';
+		});
 	}
 }
 /* End test.php */
