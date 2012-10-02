@@ -1,48 +1,69 @@
 <?php
+
+function test_function( &$event, $params ) {
+	echo "[{$event->name}] : regular function<br />";
+	var_dump( $event->result );
+	var_dump( $event->data   );
+
+	// Modify data
+	$event->data['trace'][] = 'result_after_1';
+
+	// Modify event execution
+	//$event->stop_propagation();
+
+	return 'result_after_1';
+}
+
 class test_test {
+	public static function test_static( &$event, $params ) {
+		echo "[{$event->name}] : static method<br />";
+		var_dump( $event->result );
+		var_dump( $event->data   );
+
+		// Modify data
+		$event->data['trace'][] = 'result_before_1';
+
+		// Modify event execution
+		//$event->prevent_default();
+		//$event->stop_propagation();
+
+		return 'result_before_1';
+	}
+
+	public function test_method( &$event, $params ) {
+		echo "[{$event->name}] : object method<br />";
+		var_dump( $event->result );
+		var_dump( $event->data   );
+
+		// Modify data
+		$event->data['trace'][] = 'result_before_2';
+
+		return 'result_before_2';
+	}
+
 	public static function register() {
 
-		// BEFORE
-		Event_Handler::register_before('TEST', function( &$event, $params ) {
-			echo Event::BEFORE . '<br />';
-			var_dump( $event->result );
-			var_dump( $event->data   );
-//			$event->prevent_default();
-//			$event->stop_propagation();
+		// Bind static function
+		Event_Handler::register_before('TEST', array('test_test', 'test_static') , true);
 
-			$event->result = 'result_before_1';
-		}, true);
+		// Bind object instance
+		$obj = new test_test();
+		Event_Handler::register_before('TEST', array($obj, 'test_method'), array('number' => 100));
 
-		Event_Handler::register_before('TEST', function( &$event ) {
-			echo Event::BEFORE.'_2<br />';
-			var_dump( $event->result );
-			var_dump( $event->data   );
-//			$event->prevent_default();
-//			$event->stop_propagation();
+		// Bind function
+		Event_Handler::register_after('TEST', 'test_function', false);
 
-			$event->result = 'result_before_2';
-		}, array('number' => 100));
-
-		// AFTER
+		// Bind closure
 		Event_Handler::register_after('TEST', function( &$event, $params ) {
-			echo Event::AFTER . '<br />';
+			echo "[{$event->name}] : anonymous function<br />";
 			var_dump( $event->result );
 			var_dump( $event->data   );
-//			$event->prevent_default();
-//			$event->stop_propagation();
 
-			$event->result = 'result_after_1';
-		}, false);
+			// Modify data
+			$event->data['trace'][] = 'result_after_2';
 
-		Event_Handler::register_after('TEST', function( &$event, $params ) {
-			echo Event::AFTER.'_2 <br />';
-			var_dump( $event->result );
-			var_dump( $event->data   );
-//			$event->prevent_default();
-//			$event->stop_propagation();
-
-			$event->result = 'result_after_2';
-		}, false);
+			return 'result_after_2';
+		}, new stdClass());
 	}
 }
 /* End test.php */

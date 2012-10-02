@@ -9,11 +9,20 @@ class test extends MY_Controller {
 			'test' => true
 		);
 
+		// Notice that it doesn't bind the hooks multiple times.
+		Event_Handler::load_hooks($this->hooks_folder);
+		Event_Handler::load_hooks($this->hooks_folder);
+
 		try {
-			trigger_event('TEST', $data, function( &$event ){
-				echo 'DEFAULT ACTION' . '<br />';
+			trigger_event('TEST', $data, function( &$event ) {
+				echo "[{$event->name}] : default action<br />";
 				var_dump( $event->result );
-				$event->result = 'result_default_1';
+				var_dump( $event->data   );
+
+				// Modify result & data
+				$event->data['trace'][] = 'default_action';
+
+				return 'default_action';
 			}, true);
 		} catch ( Exception $e ) {
 			var_dump( $e );
