@@ -13,21 +13,23 @@ class test extends MY_Controller {
 		Event_Handler::load_hooks($this->hooks_folder);
 		Event_Handler::load_hooks($this->hooks_folder);
 
+		$default = function( &$event ) {
+			$event->data['before'] = false;
+
+			echo "[{$event->name}] : default action<br />";
+			var_dump( $event->result );
+			var_dump( $event->data   );
+
+			// Modify result & data
+			$event->data['trace'][] = 'default_action';
+
+			return 'default_action';
+		};
+
 		try {
-			trigger_event('TEST', $data, function( &$event ) {
-				$event->data['before'] = false;
-
-				echo "[{$event->name}] : default action<br />";
-				var_dump( $event->result );
-				var_dump( $event->data   );
-
-				// Modify result & data
-				$event->data['trace'][] = 'default_action';
-
-				return 'default_action';
-			}, true);
+			trigger_event('TEST', $data, $default, true);
 		} catch ( Exception $e ) {
-			var_dump( $e );
+			echo "Received error '{$e->getMessage()}'. Doing some cleanup.";
 		}
 	}
 }

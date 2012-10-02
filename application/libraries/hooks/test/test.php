@@ -27,6 +27,7 @@ class test_test {
 		//$event->prevent_default();
 		//$event->stop_propagation();
 
+		//throw new Exception('Epic fail!');
 		return 'result_before_1';
 	}
 
